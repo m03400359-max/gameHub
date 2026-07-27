@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Hub Market & Shorts</title>
+    <!-- Admitad verification tag -->
+    <meta name="verify-admitad" content="6059c14f4c" />
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            background-color: #0b0e14;
+            color: #f3f4f6;
+            font-family: sans-serif;
+            margin: 0;
+            padding: 16px;
+            padding-bottom: 80px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #1f2937;
+            margin-bottom: 15px;
+        }
+
+        .header h1 {
+            font-size: 20px;
+            margin: 0;
+        }
+
+        /* Сайтга киргандаги юқоридаги реклама баннери */
+        .ad-banner {
+            background: #151921;
+            border: 1px dashed #6366f1;
+            padding: 10px;
+            text-align: center;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 4px;
+            margin-bottom: 20px;
+            background: #11141b;
+            padding: 4px;
+            border-radius: 10px;
+            border: 1px solid #1f2937;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 10px 2px;
+            background: transparent;
+            border: none;
+            color: #9ca3af;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 12px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .tab-btn.active {
+            background: #6366f1;
+            color: #ffffff;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px;
+            background: #151921;
+            border: 1px solid #1f2937;
+            border-radius: 8px;
+            color: #f3f4f6;
+            font-size: 14px;
+            margin-bottom: 16px;
+            outline: none;
+        }
+
+        .section { display: none; }
+        .section.active { display: block; }
+
+        .game-card {
+            background: #151921;
+            border: 1px solid #1f2937;
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .game-img {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            object-fit: cover;
+            background: #1f2937;
+            flex-shrink: 0;
+        }
+
+        .game-details { flex: 1; }
+        .game-category {
+            font-size: 10px;
+            color: #6366f1;
+            font-weight: bold;
+        }
+
+        .game-title {
+            font-size: 15px;
+            font-weight: bold;
+            color: #f3f4f6;
+            margin: 2px 0;
+        }
+
+        .btn-download {
+            padding: 10px 16px;
+            background: #10b981;
+            color: #ffffff;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* Shorts bo'limi dizayni */
+        .shorts-container {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .short-card {
+            background: #151921;
+            border: 1px solid #1f2937;
+            border-radius: 12px;
+            overflow: hidden;
+            padding-bottom: 10px;
+        }
+
+        .short-video-box {
+            width: 100%;
+            height: 320px;
+            background: #000;
+            position: relative;
+        }
+
+        .short-video-box iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .short-title {
+            padding: 10px 12px 0 12px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        /* Reklama va Taymer Modal Oyna */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            z-index: 99999;
+        }
+
+        .modal-card {
+            background: #151921;
+            border: 1px solid #6366f1;
+            border-radius: 12px;
+            padding: 20px;
+            width: 100%;
+            max-width: 320px;
+            text-align: center;
+        }
+
+        .timer-text {
+            font-size: 24px;
+            font-weight: bold;
+            color: #10b981;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Game Hub Market</h1>
+    </div>
+
+    <!-- Saytga кирганда кўринадиган трафик ва мегабайт келтирувчи реклама блоги -->
+    <div class="ad-banner">
+        Реклама: Интернет трафигингиз ва мегабайтлар учун қўллаб-қувватланг!
+    </div>
+
+    <div class="tabs">
+        <button class="tab-btn active" id="tab1" onclick="switchSection(1)">Маркет</button>
+        <button class="tab-btn" id="tab2" onclick="switchSection(2)">Shorts</button>
+        <button class="tab-btn" id="tab3" onclick="switchSection(3)">Панель</button>
+    </div>
+
+    <!-- 1-Бўлим: Маркет ва ўйинлар -->
+    <div id="sec1" class="section active">
+        <input type="text" id="searchInput" class="search-box" placeholder="Ўйинларни қидириш..." oninput="renderGames()">
+        <div id="gamesContainer"></div>
+    </div>
+
+    <!-- 2-Бўлим: Shorts (Видеолар ва мегабайт учун) -->
+    <div id="sec2" class="section">
+        <div class="shorts-container">
+            <div class="short-card">
+                <div class="short-video-box">
+                    <iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ" allowfullscreen></iframe>
+                </div>
+                <div class="short-title">Shadow Fight 2 Epic MOMENT! 🔥</div>
+            </div>
+            <div class="short-card">
+                <div class="short-video-box">
+                    <iframe src="https://www.youtube.com/embed/3JZ_D3ELwOQ" allowfullscreen></iframe>
+                </div>
+                <div class="short-title">Subway Surfers Pro Gameplay 🎮</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3-Бўлим: Панель (Ўйин қўшиш) -->
+    <div id="sec3" class="section">
+        <div style="background:#151921; padding:15px; border-radius:10px; border:1px solid #1f2937;">
+            <p style="font-size:13px; color:#9ca3af; margin-bottom:10px;">Янги ўйин ва Admitad линк қўшиш:</p>
+            <input type="text" id="gName" class="search-box" placeholder="Ўйин номи (масалан: Free Fire)">
+            <input type="text" id="gImg" class="search-box" placeholder="Расм URL манзили">
+            <input type="text" id="gLink" class="search-box" placeholder="Admitad линки (https://tatrck.com/...)">
+            <button style="width:100%; padding:12px; background:#6366f1; color:#fff; border:none; border-radius:8px; font-weight:bold; cursor:pointer;" onclick="addGame()">Қўшиш</button>
+        </div>
+    </div>
+
+    <!-- Скачать қилинганда чиқадиган 5-10 секундлик реклама ва таймер ойнаси -->
+    <div class="modal-overlay" id="adModal">
+        <div class="modal-card">
+            <h3 style="margin:0; font-size:16px;">Реклама юкланмоқда...</h3>
+            <p style="font-size: 12px; color: #9ca3af; margin-top: 8px;">Илтимос, реклама тугашини кутинг ва кейин Admitad саҳифасига ўтасиз.</p>
+            <div class="timer-text" id="timerCount">7</div>
+            <div style="font-size:11px; color:#6366f1;">Мегабайт ва трафик учун раҳмат!</div>
+        </div>
+    </div>
+
+    <script>
+        let targetAdmitadLink = "";
+        let countdownInterval;
+
+        const defaultGames = [
+            { id: 1, name: "Shadow Fight 2", category: "Экшен", img: "https://images.weserv.nl/?url=upload.wikimedia.org/wikipedia/en/f/f3/Shadow_Fight_2_Cover.jpg", link: "https://tatrck.com/h/0Hu30weU0Zn6?url=https://att.com&s=website" },
+            { id: 2, name: "Subway Surfers", category: "Аркада", img: "https://images.weserv.nl/?url=upload.wikimedia.org/wikipedia/en/5/5a/Subway_Surfers_Logo.png", link: "https://tatrck.com/h/0Hu30weU0Zn6?url=https://att.com&s=website" },
+            { id: 3, name: "PUBG Mobile", category: "Экшен", img: "https://images.weserv.nl/?url=upload.wikimedia.org/wikipedia/en/1/15/PUBG_Mobile_New_Era_Logo.jpg", link: "https://tatrck.com/h/0Hu30weU0Zn6?url=https://att.com&s=website" }
+        ];
+
+        function loadGames() {
+            const data = localStorage.getItem('gh_shorts_games_v1');
+            return data ? JSON.parse(data) : defaultGames;
+        }
+
+        function saveGames(data) {
+            localStorage.setItem('gh_shorts_games_v1', JSON.stringify(data));
+            renderGames();
+        }
+
+        function switchSection(secNum) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+
+            document.getElementById('tab' + secNum).classList.add('active');
+            document.getElementById('sec' + secNum).classList.add('active');
+        }
+
+        function renderGames() {
+            const games = loadGames();
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const container = document.getElementById('gamesContainer');
+            container.innerHTML = '';
+
+            const filtered = games.filter(g => g.name.toLowerCase().includes(search));
+
+            if(filtered.length === 0) {
+                container.innerHTML = '<p style="text-align:center; padding:20px; color:#9ca3af;">Ҳеч нарса топилмади</p>';
+                return;
+            }
+
+            filtered.forEach(g => {
+                const item = document.createElement('div');
+                item.className = 'game-card';
+                item.innerHTML = `
+                    <img src="${g.img ? 'https://images.weserv.nl/?url=' + g.img.replace('https://', '').replace('http://', '') : 'https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg'}" class="game-img" onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/1/14/No_Image_Available.jpg'">
+                    <div class="game-details">
+                        <div class="game-category">${g.category || 'Ўйин'}</div>
+                        <div class="game-title">${g.name}</div>
+                        <div style="font-size:11px; color:#10b981; font-weight:bold;">Бепул скачать</div>
+                    </div>
+                    <div class="actions">
+                        <button class="btn-download" onclick="startAdTimer('${g.link}')">Скачать</button>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        // Скачать босилганда 7 сониялик реклама таймерини ишга тушириш
+        function startAdTimer(link) {
+            targetAdmitadLink = link;
+            let timeLeft = 7; // 7 секунд реклама вақти
+            document.getElementById('timerCount').innerText = timeLeft;
+            document.getElementById('adModal').style.display = 'flex';
+
+            clearInterval(countdownInterval);
+            countdownInterval = setInterval(function() {
+                timeLeft--;
+                document.getElementById('timerCount').innerText = timeLeft;
+                if(timeLeft <= 0) {
+                    clearInterval(countdownInterval);
+                    document.getElementById('adModal').style.display = 'none';
+                    // Реклама тугагач Admitad линкига ўтиб кетади
+                    window.location.href = targetAdmitadLink;
+                }
+            }, 1000);
+        }
+
+        function addGame() {
+            const name = document.getElementById('gName').value.trim();
+            const link = document.getElementById('gLink').value.trim();
+            if(!name || !link) { alert('Ўйин номи ва Admitad линкини киритинг!'); return; }
+            
+            const list = loadGames();
+            list.unshift({
+                id: Date.now(),
+                name: name,
+                category: "Ўйин",
+                img: document.getElementById('gImg').value.trim(),
+                link: link
+            });
+            saveGames(list);
+            
+            document.getElementById('gName').value = '';
+            document.getElementById('gImg').value = '';
+            document.getElementById('gLink').value = '';
+            
+            switchSection(1);
+        }
+
+        renderGames();
+
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.ready();
+            window.Telegram.WebApp.expand();
+        }
+    </script>
+</body>
+</html>
